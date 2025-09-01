@@ -1,110 +1,98 @@
-# 🚀 ProjectDump
+# 🚀 ProjectDump GUI
 
-**ProjectDump** is a Python CLI tool that detects a project's technologies, filters out non-essential files, and compiles the source code and directory structure into a single readable file.
-
----
-
-## 📦 Features
-
-- 🔍 Auto-detects technologies (Python, JavaScript, Java, etc.)
-- 🧹 Skips dependencies, binaries, media, and config clutter
-- 🌲 Generates a clean directory tree
-- 📄 Dumps readable source code with syntax highlighting
-- ⚡ Handles large projects and ignores huge files (>100MB)
+ProjectDump là công cụ gom mã nguồn của một project thành một file duy nhất (`source_dump.txt`).  
+Phiên bản này đã được bổ sung **giao diện người dùng bằng Tkinter** để dễ thao tác hơn.
 
 ---
 
-## 🧑‍💻 Supported Technologies (Partial List)
-
-- **Languages**: Python, JS/TS, Java, Kotlin, PHP, Ruby, Go, Rust, C#, Dart, R, Scala, Elixir
-- **Frameworks**: React, Vue, Svelte, Angular, Next.js, Nuxt, Flutter, Android, iOS
-- **Infra**: Docker, Kubernetes, Terraform, Ansible
-- **CI/CD**: GitHub Actions, GitLab CI, CircleCI
+## ✨ Tính năng
+- Tự động phát hiện công nghệ dự án (Python, Node.js, Java, v.v.)
+- Lọc bỏ thư mục/file rác (node_modules, build, cache…)
+- Tạo **cây thư mục** và trích xuất nội dung code
+- Lưu ra file `source_dump.txt` ngay trong project
+- Giao diện GUI với:
+  - Chọn ngôn ngữ (Tiếng Việt / English)
+  - Chọn thư mục dự án
+  - Hiển thị log chi tiết
+  - Nút mở nhanh thư mục chứa file output
 
 ---
 
-## 📂 Output Example
+## 🖥️ Cách chạy (Python)
 
-```txt
-🚀 PROJECTDUMP
-========================================
-🌐 Select language (en/vi): en
-📂 Enter the project folder path: /path/to/your/project
-🔍 Analyzing project at: /path/to/your/project
-🔍 Scanning directories...
-🛠️  Detected technologies: python
-📁 Extensions included: .py, .pyi, .pyx
-📁 Generating directory tree...
-📄 Processing files...
-  📝 Processing: aggregator.py
-  📝 Processing: constants.py
-  📝 Processing: detector.py
-  📝 Processing: filters.py
-  📝 Processing: one_file_version.py
-  📝 Processing: tree_generator.py
-  📝 Processing: __main__.py
+### Yêu cầu
+- Python 3.8+
+- Các thư viện chuẩn (Tkinter, os, sys…) đã có sẵn trong Python
 
-✅ Success! File created: /path/to/your/project/source_dump.txt
-
-📊 Summary:
-   - Files processed: 7
-   - Output size: 30275 characters (~28 KB)
-   - Total lines: 870
-
-🎉 Done! The source_dump.txt file is ready.
-```
-
-Inside `source_dump.txt`demo:
-
-```text
-# ==================================================
-# Path: /path/to/your/project
-# Detected tech: python
-# ==================================================
-
-## DIRECTORY STRUCTURE
-
-New folder/
-├── __pycache__/
-├── __main__.py
-├── aggregator.py
-├── constants.py
-├── detector.py
-├── filters.py
-├── one_file_version.py
-├── source_dump.txt
-└── tree_generator.py
-
-## FILE CONTENTS
-
-### __main__.py
-
-import os
-...
-```
-
-## 🚀 Usage
-
-Run from the command line:
-
+### Chạy trực tiếp
 ```bash
-  python main.py /path/to/your/project
+python __main__.py
 ```
 
-## 📁 What It Ignores
+---
 
-- **Dependency folders**: node_modules, venv, etc.
+## 📦 Build thành file chạy độc lập
 
-- **Media & binaries**: .jpg, .exe, .log, etc.
+### Windows (exe)
+Cài **PyInstaller**:
+```bash
+pip install pyinstaller
+```
 
-- **Config/IDE**: .git, .vscode, .github, etc.
+Build file `.exe`:
+```bash
+pyinstaller --onefile --windowed __main__.py -n ProjectDumpGUI
+```
 
-- **Large files over 100MB**
+Kết quả: `dist/ProjectDumpGUI.exe`
 
-## ✅ Requirements
+Nếu muốn thêm icon:
+```bash
+pyinstaller --onefile --windowed --icon=icon.ico __main__.py -n ProjectDumpGUI
+```
 
-Python 3.x
+---
 
-## 🤝 Contributing
+### macOS (app)
+Cài **PyInstaller**:
+```bash
+pip install pyinstaller
+```
 
-Feel free to fork and contribute to enhance tech detection, support new stacks, or improve output formatting!
+Build file `.app`:
+```bash
+pyinstaller --onefile --windowed --name ProjectDumpGUI __main__.py
+```
+
+Kết quả: `dist/ProjectDumpGUI.app`
+
+Thêm icon `.icns`:
+```bash
+pyinstaller --onefile --windowed --icon=icon.icns __main__.py -n ProjectDumpGUI
+```
+
+⚠️ **Lưu ý**:
+- App chỉ chạy trên cùng kiến trúc máy build (Intel vs Apple Silicon).
+- Nếu chia sẻ cho người khác, có thể cần **codesign** và **notarize** với Apple Developer ID.
+
+---
+
+## 📂 File output
+Sau khi chạy thành công, file sẽ được tạo tại:
+```
+<project_path>/source_dump.txt
+```
+
+---
+
+## 🎯 Demo giao diện
+- Chọn ngôn ngữ (vi/en)
+- Chọn thư mục dự án
+- Bấm **Chạy ProjectDump**
+- Xem log chi tiết trong cửa sổ
+- Bấm **Mở thư mục output** để mở ngay thư mục chứa file kết quả
+
+---
+
+## 📜 License
+MIT License.

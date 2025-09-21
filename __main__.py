@@ -8,6 +8,28 @@ import io
 import contextlib
 import subprocess
 import platform
+import json
+
+CONFIG_FILE = "last_path.json"
+
+
+def save_last_path(path: str):
+    try:
+        with open(CONFIG_FILE, "w", encoding="utf-8") as f:
+            json.dump({"last_path": path}, f)
+    except Exception as e:
+        print("Không thể lưu last_path:", e)
+
+
+def load_last_path() -> str | None:
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                return data.get("last_path")
+        except Exception:
+            return None
+    return None
 
 
 class ProjectDumpGUI:
@@ -20,7 +42,7 @@ class ProjectDumpGUI:
 
         # Language selection
         tk.Label(root, text="🌐 Ngôn ngữ / Language:").grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        self.lang_var = tk.StringVar(value="vi")
+        self.lang_var = tk.StringVar(value="en")
         lang_menu = ttk.Combobox(root, textvariable=self.lang_var, values=["vi", "en"], state="readonly", width=10)
         lang_menu.grid(row=0, column=1, padx=10, pady=5, sticky="w")
 
@@ -30,6 +52,11 @@ class ProjectDumpGUI:
         self.path_entry = tk.Entry(root, textvariable=self.path_var, width=50)
         self.path_entry.grid(row=1, column=1, padx=10, pady=5)
         tk.Button(root, text="Browse", command=self.choose_folder).grid(row=1, column=2, padx=5, pady=5)
+
+        # 🔄 Load last project path nếu có
+        last_path = load_last_path()
+        if last_path:
+            self.path_var.set(last_path)
 
         # Run + Open buttons
         tk.Button(root, text="▶️ Chạy ProjectDump", command=self.run_projectdump).grid(
@@ -57,6 +84,7 @@ class ProjectDumpGUI:
         folder = filedialog.askdirectory()
         if folder:
             self.path_var.set(folder)
+            save_last_path(folder)  # 👈 lưu lại ngay khi chọn
 
     def run_projectdump(self):
         project_path = self.path_var.get().strip() or os.getcwd()

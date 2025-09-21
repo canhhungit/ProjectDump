@@ -166,13 +166,19 @@ def should_exclude_path(path: Union[str, Path], exclude_dirs: Set[str]) -> bool:
     return any(part.lower() in exclude_dirs for part in Path(path).parts)
 
 
-def should_exclude_file(filename: str, exclude_files: Set[str]) -> bool:
+def should_exclude_file(filename: str, exclude_files: set[str]) -> bool:
     filename_lower = filename.lower()
-    return any(
-        filename_lower == pattern.lower()
-        or (
-            pattern.startswith("*.")
-            and filename_lower.endswith(pattern[2:].lower())
-        )
-        for pattern in exclude_files
-    )
+
+    for pattern in exclude_files:
+        pattern = pattern.lower()
+
+        # Nếu pattern là *.ext → so sánh đúng đuôi file
+        if pattern.startswith("*.") and filename_lower.endswith(pattern[1:]):
+            return True
+
+        # Nếu pattern là tên file cụ thể (vd: package-lock.json)
+        if filename_lower == pattern:
+            return True
+
+    return False
+

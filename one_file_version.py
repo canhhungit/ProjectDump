@@ -308,14 +308,21 @@ def should_exclude_path(path: str, exclude_dirs: Set[str]) -> bool:
     return any(part in exclude_dirs for part in path_parts)
 
 
-def should_exclude_file(filename: str, exclude_files: Set[str]) -> bool:
-    """Check if a file should be excluded based on file patterns"""
-    filename_lower: str = filename.lower()
-    return any(
-        filename_lower.startswith(pattern.lower())
-        or filename_lower.endswith(pattern.lower())
-        for pattern in exclude_files
-    )
+def should_exclude_file(filename: str, exclude_files: set[str]) -> bool:
+    filename_lower = filename.lower()
+
+    for pattern in exclude_files:
+        pattern = pattern.lower()
+
+        # Nếu pattern là *.ext → so sánh đúng đuôi file
+        if pattern.startswith("*.") and filename_lower.endswith(pattern[1:]):
+            return True
+
+        # Nếu pattern là tên file cụ thể (vd: package-lock.json)
+        if filename_lower == pattern:
+            return True
+
+    return False
 
 
 def generate_directory_tree(
